@@ -14,12 +14,12 @@ repositories {
 
 dependencies {
     compileOnly("org.springframework:spring-expression")
-    testCompile("junit", "junit")
+    testImplementation("junit", "junit")
+    testImplementation("org.springframework:spring-expression")
     constraints {
-        testCompile("junit", "junit", "$junit4Version")
+        testImplementation("junit", "junit", "$junit4Version")
     }
 }
-
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
