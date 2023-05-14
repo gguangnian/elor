@@ -1,43 +1,36 @@
 package com.github.gguangnian.elor;
 
-import com.github.gguangnian.elor.demo.SimpleEvaluationMethodVariable;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
-import org.springframework.expression.common.TemplateParserContext;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.SimpleEvaluationContext;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import com.github.gguangnian.elor.support.EvaluationVariable;
+import com.github.gguangnian.elor.template.RecordTemplate;
+import com.github.gguangnian.elor.template.RecordTemplateFactory;
+import com.github.gguangnian.elor.template.defaults.DefaultRecordTemplateFactory;
+import org.junit.Test;
 
 public class SpelDemo {
-    public static void main(String[] args) {
-        //1可重用线程安全
-        SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
+    @Test
+    public void test() {
+        EvaluationVariable evaluationVariable = new EvaluationVariable() {
+            @Override
+            public String variableName() {
+                return "dddccc";
+            }
 
-        //2获取 expressionString
-        //3创建Expression
+            @Override
+            public String apply(String value) {
+                System.out.println(value);
+                return "abc";
+            }
+        };
 
+        Configuration configuration = new Configuration();
+        RecordTemplateFactory recordTemplateFactory = new DefaultRecordTemplateFactory(configuration);
+        RecordTemplate recordTemple = recordTemplateFactory.getRecordTemple();
+        recordTemple.setVariable("var", "var");
+        recordTemple.setVariable(evaluationVariable.variableName(), evaluationVariable);
+        System.out.println(recordTemple.parseTemplate("aaa#{#dddccc.apply(#var)}zzz"));
 
-        //expression可重用但线程不安全
-        Expression expression = spelExpressionParser.parseExpression("aaa#{#abc.apply(#val)}ccc", new TemplateParserContext());
-
-        //4获取Variable  或自定义方法
-        //45没有顺序
-        //5创建EvaluationContext
-
-        //6设置Variable rootObj
-
-        //设置值
-        EvaluationContext evaluationContext = SimpleEvaluationContext.forReadOnlyDataBinding().withInstanceMethods().build();
-        SimpleEvaluationMethodVariable simpleEvaluationMethodVariable = new SimpleEvaluationMethodVariable();
-        evaluationContext.setVariable("val", " val ");
-        evaluationContext.setVariable(simpleEvaluationMethodVariable.variableName(), simpleEvaluationMethodVariable);
-        // 7解析
-
-        //执行
-        System.out.println(expression.getValue(evaluationContext));
-
-        //8持节策略
-        //9清理
-
+        RecordTemplate recordTemple1 = recordTemplateFactory.getRecordTemple(true);
+        recordTemple1.setVariable("var", "var");
+        System.out.println(recordTemple1.parseTemplate("aaa#{#var}zzz"));
     }
 }
